@@ -25,7 +25,7 @@ def launch_setup(context, *args, **kwargs):
         "simulation": simulation,
         "robot_ip": robot_ip,
         "robot_port": robot_port,
-        "control_port": control_port,
+        "control_port": control_port
     }
 
     # MoveIt2
@@ -147,14 +147,14 @@ def launch_setup(context, *args, **kwargs):
         executable="servo_node",
         name="servo_node",
         parameters=[
-                servo_params,
-                planning_group_name,
-                moveit_config.robot_description,
-                moveit_config.robot_description_semantic,
-                moveit_config.robot_description_kinematics,
-                moveit_config.joint_limits,
-                moveit_config.trajectory_execution,
-        	moveit_config.planning_pipelines,
+            servo_params,
+            planning_group_name,
+            moveit_config.robot_description,
+            moveit_config.robot_description_semantic,
+            moveit_config.robot_description_kinematics,
+            moveit_config.joint_limits,
+            moveit_config.trajectory_execution,
+            moveit_config.planning_pipelines,
         	moveit_config.planning_scene_monitor
         ],
         output="screen",

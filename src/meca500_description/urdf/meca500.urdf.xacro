@@ -1,4 +1,4 @@
-<robot name="meca_500_r3" xmlns:xacro="http://ros.org/wiki/xacro">
+<robot name="meca500" xmlns:xacro="http://ros.org/wiki/xacro">
   <!-- Base link is the center of the robot's bottom plate -->
   <link name="meca_base_link">
     <visual>
