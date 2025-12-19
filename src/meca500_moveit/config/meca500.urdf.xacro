@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+
+<!-- Author: Garrison Johnston 12/2025 -->
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="meca500">
+    <xacro:arg name="initial_positions_file" default="initial_positions.yaml" />
+
+    <!-- Import meca500 urdf file -->
+    <xacro:include filename="$(find meca500_description)/urdf/meca500.xacro" />
+
+    <!-- Import control_xacro -->
+    <xacro:include filename="meca500.ros2_control.xacro" />
+
+
+    <xacro:meca500_ros2_control name="FakeSystem" initial_positions_file="$(arg initial_positions_file)"/>
+
+</robot>

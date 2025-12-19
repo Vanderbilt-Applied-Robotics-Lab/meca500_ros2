@@ -1,0 +1,10 @@
+<library path="meca500_hardware">
+    <class
+        name="meca500_hardware/Meca500Hardware"
+        type="meca500_hardware::Meca500Hardware"
+        base_class_type="hardware_interface::SystemInterface">
+        <description>
+            ros2_control hardware interface for Mecademic Meca500 robot
+        </description>
+    </class>
+</library>

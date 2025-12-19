@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+    <name>meca500_bringup</name>
+    <version>0.0.0</version>
+    <description>Main launch files for the meca500.</description>
+    <maintainer email="Garrison.L.Johnston@vanderbilt.edu">Garrison Johnston</maintainer>
+    <author email="Garrison.L.Johnston@vanderbilt.edu">Garrison Johnston</author>
+    <license>BSD</license>
+
+    <buildtool_depend>ament_cmake</buildtool_depend>
+    <buildtool_depend>ament_cmake_python</buildtool_depend>
+
+    <!-- general -->
+    <exec_depend>rclpy</exec_depend>
+    <exec_depend>launch</exec_depend>
+    <exec_depend>launch_ros</exec_depend>
+
+    <!-- rviz2 -->
+    <exec_depend>rviz2</exec_depend>
+    <exec_depend>rviz_common</exec_depend>
+    <exec_depend>rviz_default_plugins</exec_depend>
+
+    <!-- moveit -->
+    <exec_depend>moveit_ros_move_group</exec_depend>
+    <exec_depend>moveit_visual_tools</exec_depend>
+    <exec_depend>moveit_kinematics</exec_depend>
+    <exec_depend>moveit_planners</exec_depend>
+    <exec_depend>moveit_simple_controller_manager</exec_depend>
+    <exec_depend>moveit_configs_utils</exec_depend>
+    <exec_depend>tf2_ros</exec_depend>
+
+    <!-- urdf -->
+    <exec_depend>urdf</exec_depend>
+    <exec_depend>xacro</exec_depend>
+
+    <!-- control -->
+    <exec_depend>ros2_control</exec_depend>
+    <exec_depend>ros2_controllers</exec_depend>
+    <exec_depend>controller_manager</exec_depend>
+    <exec_depend>joint_state_publisher</exec_depend>
+    <exec_depend>joint_state_publisher_gui</exec_depend>
+    <exec_depend>joint_state_broadcaster</exec_depend>
+    <exec_depend>joint_trajectory_controller</exec_depend>
+    <exec_depend>position_controllers</exec_depend>
+    <exec_depend>gripper_controllers</exec_depend>
+
+    <!-- custom packages -->
+    <exec_depend>meca500_description</exec_depend>
+    <exec_depend>meca500_moveit</exec_depend>
+    <exec_depend>meca500_hardware</exec_depend>
+
+    <export>
+        <build_type>ament_cmake</build_type>
+    </export>
+</package>

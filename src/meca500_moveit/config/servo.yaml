@@ -1,0 +1,50 @@
+# Parameters for MoveIt2 Servo
+#
+# Author: Garrison Johnston 12/2025
+
+# Command specs
+publish_period: 0.01
+max_expected_latency: 0.01
+command_in_type: "speed_units"
+scale:
+  linear: 1.0
+  rotation: 1.0
+  joint: 1.0
+
+command_out_type: trajectory_msgs/JointTrajectory
+
+# Publish
+publish_joint_positions: true
+publish_joint_velocities: false     # TODO: CHECK THIS
+publish_joint_accelerations: false  # TODO: CHECK THIS
+
+# Smoothing
+use_smoothing: true
+smoothing_filter_plugin_name: "online_signal_smoothing::ButterworthFilterPlugin"
+
+is_primary_planning_scene_monitor: true
+check_octomap_collisions: false
+
+# MoveIt specs
+ee_frame: end_effector
+planning_frame: world
+move_group_name: meca500
+
+# Singularity handling
+lower_singularity_threshold: 100000.0
+hard_stop_singularity_threshold: 300000.0
+leaving_singularity_thershold_multiplier: 2.0
+joint_limit_margins: [0.12]
+
+# Topic names
+cartesian_command_in_topic: ~/delta_twist_cmds
+joint_command_in_topic: ~/delta_joint_cmds
+joint_topic: /joint_states
+status_topic: ~/status
+command_out_topic: /joint_trajectory_controller/joint_trajectory
+
+# Collisions
+check_collisions: true
+collision_check_rate: 10.0                # [Hz]
+self_collision_proximity_threshold: 0.01  # [m]
+scene_collision_proximity_threshold: 0.02 # [m]

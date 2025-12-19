@@ -1,0 +1,23 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: meca500_description
+    relative_path: urdf/meca500.xacro
+  srdf:
+    relative_path: config/meca500.srdf
+  package_settings:
+    author_name: Garrison Johnston
+    author_email: Garrison.L.Johnston@vanderbilt.edu
+    generated_timestamp: 1745809668
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+  modified_urdf:
+    xacros:
+      - control_xacro
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
