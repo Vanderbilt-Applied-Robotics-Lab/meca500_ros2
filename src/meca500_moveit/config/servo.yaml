@@ -28,7 +28,7 @@ check_octomap_collisions: false
 # MoveIt specs
 ee_frame: end_effector
 planning_frame: world
-move_group_name: meca500
+move_group_name: meca500_arm
 
 # Singularity handling
 lower_singularity_threshold: 100000.0

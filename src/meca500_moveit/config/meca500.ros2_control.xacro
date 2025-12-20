@@ -13,29 +13,35 @@
             <param name="robot_port">10000</param>
         </hardware>
 
-        <joint name="joint_1">
+        <joint name="joint1">
             <command_interface name="position"/>
             <state_interface name="position"/>
+
         </joint>
-        <joint name="joint_2">
+        <joint name="joint2">
             <command_interface name="position"/>
             <state_interface name="position"/>
+
         </joint>
-        <joint name="joint_3">
+        <joint name="joint3">
             <command_interface name="position"/>
             <state_interface name="position"/>
+
         </joint>
-        <joint name="joint_4">
+        <joint name="joint4">
             <command_interface name="position"/>
             <state_interface name="position"/>
+
         </joint>
-        <joint name="joint_5">
+        <joint name="joint5">
             <command_interface name="position"/>
             <state_interface name="position"/>
+
         </joint>
-        <joint name="joint_6">
+        <joint name="joint6">
             <command_interface name="position"/>
             <state_interface name="position"/>
+
         </joint>
         </ros2_control>
     </xacro:macro>

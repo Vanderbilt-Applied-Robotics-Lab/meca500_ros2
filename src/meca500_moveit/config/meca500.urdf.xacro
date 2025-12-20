@@ -2,7 +2,7 @@
 
 <!-- Author: Garrison Johnston 12/2025 -->
 
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="meca500">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="meca500_arm">
     <xacro:arg name="initial_positions_file" default="initial_positions.yaml" />
 
     <!-- Import meca500 urdf file -->
@@ -11,7 +11,5 @@
     <!-- Import control_xacro -->
     <xacro:include filename="meca500.ros2_control.xacro" />
 
-
-    <xacro:meca500_ros2_control name="FakeSystem" initial_positions_file="$(arg initial_positions_file)"/>
-
+    <xacro:meca500_ros2_control name="$(arg hardware_type)" initial_positions_file="$(arg initial_positions_file)"/>
 </robot>

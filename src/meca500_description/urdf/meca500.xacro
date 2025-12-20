@@ -1,10 +1,10 @@
-<robot name="meca500" xmlns:xacro="http://ros.org/wiki/xacro">
+<robot name="meca500_arm" xmlns:xacro="http://ros.org/wiki/xacro">
   <!-- Base link is the center of the robot's bottom plate -->
   <link name="meca_base_link">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://meca500_description/meshes/meca_500_r3_base.dae" />
+        <mesh filename="package://meca500_description/meshes/visual/meca_500_r3_base.dae" />
       </geometry>
     </visual>
     <collision>
@@ -20,7 +20,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://meca500_description/meshes/meca_500_r3_j1.dae" />
+        <mesh filename="package://meca500_description/meshes/visual/meca_500_r3_j1.dae" />
       </geometry>
     </visual>
     <collision>
@@ -44,7 +44,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://meca500_description/meshes/meca_500_r3_j2.dae" />
+        <mesh filename="package://meca500_description/meshes/visual/meca_500_r3_j2.dae" />
       </geometry>
     </visual>
     <collision>
@@ -68,7 +68,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://meca500_description/meshes/meca_500_r3_j3.dae" />
+        <mesh filename="package://meca500_description/meshes/visual/meca_500_r3_j3.dae" />
       </geometry>
     </visual>
     <collision>
@@ -92,7 +92,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://meca500_description/meshes/meca_500_r3_j4.dae" />
+        <mesh filename="package://meca500_description/meshes/visual/meca_500_r3_j4.dae" />
       </geometry>
     </visual>
     <collision>
@@ -116,7 +116,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://meca500_description/meshes/meca_500_r3_j5.dae" />
+        <mesh filename="package://meca500_description/meshes/visual/meca_500_r3_j5.dae" />
       </geometry>
     </visual>
     <collision>
@@ -140,7 +140,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://meca500_description/meshes/meca_500_r3_j6.dae" />
+        <mesh filename="package://meca500_description/meshes/visual/meca_500_r3_j6.dae" />
       </geometry>
     </visual>
     <collision>

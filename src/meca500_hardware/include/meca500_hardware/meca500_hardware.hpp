@@ -17,7 +17,9 @@
 #include <vector>
 #include <mutex>
 
-namespace Meca500Robot
+#include <rclcpp/rclcpp.hpp>
+
+namespace meca500_hardware
 {
 
     class HARDWARE_INTERFACE_PUBLIC Meca500Hardware : public hardware_interface::SystemInterface
@@ -44,6 +46,10 @@ namespace Meca500Robot
         hardware_interface::return_type write(
             const rclcpp::Time &time,
             const rclcpp::Duration &period) override;
+        
+        int activate_robot();
+        int home_robot();
+        int deactivate_robot();
 
     private:
         // Networking
@@ -51,6 +57,9 @@ namespace Meca500Robot
         void disconnect();
         bool send_command(const std::string &cmd);
         std::string receive_response();
+        int wait_for_return_code(int code1, int code2 = 0);
+        int parse_return_code(std::string raw_code);
+
 
         std::string robot_ip_;
         int robot_port_;

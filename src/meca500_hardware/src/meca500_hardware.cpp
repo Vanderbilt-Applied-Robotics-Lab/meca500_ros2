@@ -8,7 +8,7 @@
 #include <cstring>
 #include <sstream>
 
-namespace Meca500Robot
+namespace meca500_hardware
 {
 
   hardware_interface::CallbackReturn
@@ -63,8 +63,10 @@ namespace Meca500Robot
     }
 
     // Meca500 startup sequence see Mecademic examples
-    send_command("ActivateRobot");
-    send_command("Home");
+    // send_command("ActivateRobot");
+    activate_robot();
+    // send_command("Home");
+    home_robot();
     send_command("StartJog");
 
     return hardware_interface::CallbackReturn::SUCCESS;
@@ -73,20 +75,65 @@ namespace Meca500Robot
   hardware_interface::CallbackReturn
   Meca500Hardware::on_deactivate(const rclcpp_lifecycle::State &)
   {
-    send_command("DeactivateRobot");
+    // 
+    deactivate_robot();
     disconnect();
     return hardware_interface::CallbackReturn::SUCCESS;
   }
 
-  hardware_interface::return_type
-  Meca500Hardware::read(const rclcpp::Time &, const rclcpp::Duration &)
-  {
-    // Optional: query joint positions if needed
-    // send_command("GetJoints");
-    // parse response into hw_states_pos_
+hardware_interface::return_type
+Meca500Hardware::read(const rclcpp::Time &, const rclcpp::Duration &)
+{
+    std::lock_guard<std::mutex> lock(socket_mutex_);
+
+    send_command("GetJoints");
+    std::string response = receive_response();
+    // RCLCPP_INFO(rclcpp::get_logger("Meca500Hardware"), "Raw joint response: '%s'", response.c_str());
+
+    // Look for the first '[' after the timestamp
+    auto start = response.find('[');
+    if (start != std::string::npos)
+    {
+        start = response.find('[', start + 1);
+        auto end = response.find(']', start);
+        if (end != std::string::npos)
+        {
+            std::string joints_str = response.substr(start + 1, end - start - 1);
+            std::istringstream ss(joints_str);
+            std::string token;
+            size_t i = 0;
+
+            while (std::getline(ss, token, ',') && i < hw_states_pos_.size())
+            {
+                // Remove whitespace
+                token.erase(remove_if(token.begin(), token.end(), ::isspace), token.end());
+
+                // Only parse numeric tokens
+                if (!token.empty() && (isdigit(token[0]) || token[0] == '-' || token[0] == '+'))
+                {
+                    try
+                    {
+                        hw_states_pos_[i] = std::stod(token) * M_PI / 180.0;  // convert to radians
+                    }
+                    catch (const std::exception &e)
+                    {
+                        RCLCPP_WARN(rclcpp::get_logger("Meca500Hardware"),
+                            "Failed to parse joint %zu: '%s'", i, token.c_str());
+                    }
+                }
+                else
+                {
+                    RCLCPP_DEBUG(rclcpp::get_logger("Meca500Hardware"),
+                        "Ignoring non-numeric token: '%s'", token.c_str());
+                }
+
+                i++;
+            }
+        }
+    }
 
     return hardware_interface::return_type::OK;
-  }
+}
 
   hardware_interface::return_type
   Meca500Hardware::write(const rclcpp::Time &, const rclcpp::Duration &)
@@ -94,17 +141,39 @@ namespace Meca500Robot
     std::lock_guard<std::mutex> lock(socket_mutex_);
 
     std::ostringstream cmd;
-    cmd << "MoveJoints(";
-    for (size_t i = 0; i < hw_commands_pos_.size(); i++)
-    {
-      cmd << hw_commands_pos_[i];
-      if (i < hw_commands_pos_.size() - 1)
-        cmd << ",";
-    }
-    cmd << ")";
+  cmd << "MoveJoints(";
+  for (size_t i = 0; i < hw_commands_pos_.size(); i++)
+  {
+    double degrees = hw_commands_pos_[i] * 180.0 / M_PI;  // convert radians -> degrees
+    cmd << degrees;
+    if (i < hw_commands_pos_.size() - 1)
+      cmd << ",";
+  }
+  cmd << ")";
 
     send_command(cmd.str());
     return hardware_interface::return_type::OK;
+  }
+
+  int Meca500Hardware::activate_robot()
+  {
+    RCLCPP_INFO(rclcpp::get_logger("Meca500Hardware"), "Activating Robot...");
+    send_command("ActivateRobot");
+    return wait_for_return_code(3000, 2001); // Wait for activation done
+  }
+  
+  int Meca500Hardware::home_robot()
+  {
+    RCLCPP_INFO(rclcpp::get_logger("Meca500Hardware"), "Homing Robot...");
+    send_command("Home");
+    return wait_for_return_code(2002, 2003); // Wait for homing done
+  }
+  
+  int Meca500Hardware::deactivate_robot()
+  {
+    RCLCPP_INFO(rclcpp::get_logger("Meca500Hardware"), "Deactivating Robot...");
+    send_command("DeactivateRobot");
+    return wait_for_return_code(2004); // Wait for deactivation done
   }
 
   /* ---------------- TCP helpers ---------------- */
@@ -147,10 +216,31 @@ namespace Meca500Robot
     return "";
   }
 
-} // namespace Meca500Hardware
+  int Meca500Hardware::wait_for_return_code(int code1, int code2)
+  {
+    int received_code = 0;
+
+    while (received_code != code1 && received_code != code2)
+    {
+      std::string full_code =   receive_response();
+      received_code = parse_return_code(full_code); // Error code received
+        RCLCPP_INFO(rclcpp::get_logger("Meca500Hardware"),
+                        "got return code: %s", full_code.c_str());
+    }
+    RCLCPP_INFO(rclcpp::get_logger("Meca500Hardware"),
+                        "recieved correct return code");
+    return 0; // Success
+  }
+
+  int Meca500Hardware::parse_return_code(std::string raw_code)
+  {
+    return std::stoi( raw_code.substr(1, 4) );
+  }
+
+} // namespace meca500_hardware
 
 #include <pluginlib/class_list_macros.hpp>
 
 PLUGINLIB_EXPORT_CLASS(
-  Meca500Robot::Meca500Hardware,
+  meca500_hardware::Meca500Hardware,
   hardware_interface::SystemInterface)
