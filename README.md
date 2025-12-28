@@ -4,27 +4,28 @@ ROS 2 Controllers For the Mecademic meca500 robot
 # Requirements
 * [ROS 2 Humble](https://docs.ros.org/en/humble/Installation.html)
 * [Ubuntu 22.04](https://releases.ubuntu.com/jammy/)
-* [Mecademic Python API](https://github.com/Mecademic/mecademicpy)
-* [pipy](https://pypi.org/)
+* rosdep
 
 # Installation
-1. Download Mecademic API
-
-```bash
-pip install mecademicpy
-```
-
-2. Create workspace
+1. Create workspace
 
 ```bash
 mkdir -p ~/workspace/meca_ws/src
 ```
 
-3. Download code
+2. Download code
 
 ```bash
 cd ~/workspace/meca_ws/src
 git clone https://github.com/Vanderbilt-Applied-Robotics-Lab/meca500_ros2.git
+```
+
+3. Install dependencies
+
+```bash
+sudo rosdep init
+rosdep update
+rosdep install --from-paths src --ignore-src -r -y
 ```
 
 4. Build code

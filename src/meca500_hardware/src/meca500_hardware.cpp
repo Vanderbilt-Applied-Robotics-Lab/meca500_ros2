@@ -8,6 +8,8 @@
 #include <cstring>
 #include <sstream>
 
+using meca500_hardware::SuccessCode;
+
 namespace meca500_hardware
 {
 
@@ -62,12 +64,20 @@ namespace meca500_hardware
       return hardware_interface::CallbackReturn::ERROR;
     }
 
-    // Meca500 startup sequence see Mecademic examples
-    // send_command("ActivateRobot");
-    activate_robot();
-    // send_command("Home");
-    home_robot();
-    send_command("StartJog");
+    // Meca500 startup sequence
+    if (!activateRobot())
+    {
+      RCLCPP_WARN(rclcpp::get_logger("Meca500Hardware"), "Failed to activate robot");
+      return hardware_interface::CallbackReturn::ERROR;
+    }
+    
+    if (!homeRobot())
+    {
+      RCLCPP_WARN(rclcpp::get_logger("Meca500Hardware"), "Failed to home robot");
+      return hardware_interface::CallbackReturn::ERROR;
+    }
+
+    sendCommand("StartJog");
 
     return hardware_interface::CallbackReturn::SUCCESS;
   }
@@ -76,7 +86,7 @@ namespace meca500_hardware
   Meca500Hardware::on_deactivate(const rclcpp_lifecycle::State &)
   {
     // 
-    deactivate_robot();
+    deactivateRobot();
     disconnect();
     return hardware_interface::CallbackReturn::SUCCESS;
   }
@@ -86,9 +96,8 @@ Meca500Hardware::read(const rclcpp::Time &, const rclcpp::Duration &)
 {
     std::lock_guard<std::mutex> lock(socket_mutex_);
 
-    send_command("GetJoints");
-    std::string response = receive_response();
-    // RCLCPP_INFO(rclcpp::get_logger("Meca500Hardware"), "Raw joint response: '%s'", response.c_str());
+    sendCommand("GetJoints");
+    std::string response = receiveResponse();
 
     // Look for the first '[' after the timestamp
     auto start = response.find('[');
@@ -151,29 +160,29 @@ Meca500Hardware::read(const rclcpp::Time &, const rclcpp::Duration &)
   }
   cmd << ")";
 
-    send_command(cmd.str());
+    sendCommand(cmd.str());
     return hardware_interface::return_type::OK;
   }
 
-  int Meca500Hardware::activate_robot()
+  int Meca500Hardware::activateRobot()
   {
     RCLCPP_INFO(rclcpp::get_logger("Meca500Hardware"), "Activating Robot...");
-    send_command("ActivateRobot");
-    return wait_for_return_code(3000, 2001); // Wait for activation done
+    sendCommand("ActivateRobot");
+    return waitForReturnCode(SuccessCode::MOTORS_ACTIVATED, SuccessCode::MOTORS_ALREADY_ACTIVATED); // Wait for activation done
   }
   
-  int Meca500Hardware::home_robot()
+  int Meca500Hardware::homeRobot()
   {
     RCLCPP_INFO(rclcpp::get_logger("Meca500Hardware"), "Homing Robot...");
-    send_command("Home");
-    return wait_for_return_code(2002, 2003); // Wait for homing done
+    sendCommand("Home");
+    return waitForReturnCode(SuccessCode::HOMING_DONE, SuccessCode::ALREADY_HOMED); // Wait for activation done
   }
   
-  int Meca500Hardware::deactivate_robot()
+  int Meca500Hardware::deactivateRobot()
   {
     RCLCPP_INFO(rclcpp::get_logger("Meca500Hardware"), "Deactivating Robot...");
-    send_command("DeactivateRobot");
-    return wait_for_return_code(2004); // Wait for deactivation done
+    sendCommand("DeactivateRobot");
+    return waitForReturnCode(SuccessCode::MOTORS_DEACTIVATED); // Wait for deactivation done
   }
 
   /* ---------------- TCP helpers ---------------- */
@@ -198,13 +207,13 @@ Meca500Hardware::read(const rclcpp::Time &, const rclcpp::Duration &)
       close(socket_fd_);
   }
 
-  bool Meca500Hardware::send_command(const std::string &cmd)
+  bool Meca500Hardware::sendCommand(const std::string &cmd)
   {
     std::string msg = cmd + "\n";
     return send(socket_fd_, msg.c_str(), msg.size(), 0) >= 0;
   }
 
-  std::string Meca500Hardware::receive_response()
+  std::string Meca500Hardware::receiveResponse()
   {
     char buffer[1024];
     ssize_t len = recv(socket_fd_, buffer, sizeof(buffer) - 1, 0);
@@ -216,25 +225,33 @@ Meca500Hardware::read(const rclcpp::Time &, const rclcpp::Duration &)
     return "";
   }
 
-  int Meca500Hardware::wait_for_return_code(int code1, int code2)
+  int Meca500Hardware::waitForReturnCode(SuccessCode code1, SuccessCode code2)
   {
-    int received_code = 0;
+    SuccessCode received_code{0};
 
     while (received_code != code1 && received_code != code2)
     {
-      std::string full_code =   receive_response();
-      received_code = parse_return_code(full_code); // Error code received
-        RCLCPP_INFO(rclcpp::get_logger("Meca500Hardware"),
+      std::string full_code = receiveResponse();
+      received_code = parseReturnCode(full_code); 
+      
+      RCLCPP_DEBUG(rclcpp::get_logger("Meca500Hardware"),
                         "got return code: %s", full_code.c_str());
+
+      // return 1 and break if an error happens
+      if (isErrorCode(received_code))
+      {
+        RCLCPP_WARN(rclcpp::get_logger("Meca500Hardware"),
+                        "got error code: %s", getErrorMessage(received_code).c_str());
+        return 1; // failure
+      }
     }
-    RCLCPP_INFO(rclcpp::get_logger("Meca500Hardware"),
-                        "recieved correct return code");
+
     return 0; // Success
   }
 
-  int Meca500Hardware::parse_return_code(std::string raw_code)
+  SuccessCode Meca500Hardware::parseReturnCode(std::string raw_code)
   {
-    return std::stoi( raw_code.substr(1, 4) );
+    return static_cast<meca500_hardware::SuccessCode>(std::stoul(raw_code.substr(1, 4)));
   }
 
 } // namespace meca500_hardware
