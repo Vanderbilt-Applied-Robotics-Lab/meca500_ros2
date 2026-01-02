@@ -147,15 +147,15 @@ Meca500Hardware::read(const rclcpp::Time &, const rclcpp::Duration &)
     std::lock_guard<std::mutex> lock(socket_mutex_);
 
     std::ostringstream cmd;
-  cmd << "MoveJoints(";
-  for (size_t i = 0; i < hw_commands_pos_.size(); i++)
-  {
-    double degrees = hw_commands_pos_[i] * 180.0 / M_PI;  // convert radians -> degrees
-    cmd << degrees;
-    if (i < hw_commands_pos_.size() - 1)
-      cmd << ",";
-  }
-  cmd << ")";
+    cmd << "MoveJoints(";
+    for (size_t i = 0; i < hw_commands_pos_.size(); i++)
+    {
+      double degrees = hw_commands_pos_[i] * 180.0 / M_PI;  // convert radians -> degrees
+      cmd << degrees;
+      if (i < hw_commands_pos_.size() - 1)
+        cmd << ",";
+    }
+    cmd << ")";
 
     sendCommand(cmd.str());
     return hardware_interface::return_type::OK;
