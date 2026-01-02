@@ -77,15 +77,12 @@ namespace meca500_hardware
       return hardware_interface::CallbackReturn::ERROR;
     }
 
-    sendCommand("StartJog");
-
     return hardware_interface::CallbackReturn::SUCCESS;
   }
 
   hardware_interface::CallbackReturn
   Meca500Hardware::on_deactivate(const rclcpp_lifecycle::State &)
   {
-    // 
     deactivateRobot();
     disconnect();
     return hardware_interface::CallbackReturn::SUCCESS;
@@ -164,21 +161,21 @@ Meca500Hardware::read(const rclcpp::Time &, const rclcpp::Duration &)
     return hardware_interface::return_type::OK;
   }
 
-  int Meca500Hardware::activateRobot()
+  bool Meca500Hardware::activateRobot()
   {
     RCLCPP_INFO(rclcpp::get_logger("Meca500Hardware"), "Activating Robot...");
     sendCommand("ActivateRobot");
     return waitForReturnCode(SuccessCode::MOTORS_ACTIVATED, SuccessCode::MOTORS_ALREADY_ACTIVATED); // Wait for activation done
   }
   
-  int Meca500Hardware::homeRobot()
+  bool Meca500Hardware::homeRobot()
   {
     RCLCPP_INFO(rclcpp::get_logger("Meca500Hardware"), "Homing Robot...");
     sendCommand("Home");
     return waitForReturnCode(SuccessCode::HOMING_DONE, SuccessCode::ALREADY_HOMED); // Wait for activation done
   }
   
-  int Meca500Hardware::deactivateRobot()
+  bool Meca500Hardware::deactivateRobot()
   {
     RCLCPP_INFO(rclcpp::get_logger("Meca500Hardware"), "Deactivating Robot...");
     sendCommand("DeactivateRobot");
@@ -225,7 +222,7 @@ Meca500Hardware::read(const rclcpp::Time &, const rclcpp::Duration &)
     return "";
   }
 
-  int Meca500Hardware::waitForReturnCode(SuccessCode code1, SuccessCode code2)
+  bool Meca500Hardware::waitForReturnCode(SuccessCode code1, SuccessCode code2)
   {
     SuccessCode received_code{0};
 
@@ -234,7 +231,7 @@ Meca500Hardware::read(const rclcpp::Time &, const rclcpp::Duration &)
       std::string full_code = receiveResponse();
       received_code = parseReturnCode(full_code); 
       
-      RCLCPP_DEBUG(rclcpp::get_logger("Meca500Hardware"),
+      RCLCPP_INFO(rclcpp::get_logger("Meca500Hardware"),
                         "got return code: %s", full_code.c_str());
 
       // return 1 and break if an error happens
@@ -242,11 +239,11 @@ Meca500Hardware::read(const rclcpp::Time &, const rclcpp::Duration &)
       {
         RCLCPP_WARN(rclcpp::get_logger("Meca500Hardware"),
                         "got error code: %s", getErrorMessage(received_code).c_str());
-        return 1; // failure
+        return false; // failure
       }
     }
 
-    return 0; // Success
+    return true; // Success
   }
 
   SuccessCode Meca500Hardware::parseReturnCode(std::string raw_code)

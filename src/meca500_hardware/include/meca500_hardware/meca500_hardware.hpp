@@ -52,21 +52,21 @@ namespace meca500_hardware
         
         /**
          * Activates the robot. Will block until completed.
-         * @return 0 if sucessful, 1 if error 
+         * @return true if robot activated, false if error received 
          */
-        int activateRobot();
+        bool activateRobot();
 
         /**
          * Homes the robot. Will block until completed.
-         * @return 0 if sucessful, 1 if error 
+         * @return true if robot homed, false if error 
          */
-        int homeRobot();
+        bool homeRobot();
 
         /**
          * Deactivates the robot. Will block until completed.
-         * @return 0 if sucessful, 1 if error 
+         * @return true if robot deactivated, false if error 
          */
-        int deactivateRobot();
+        bool deactivateRobot();
 
     private:
         // Networking
@@ -99,9 +99,9 @@ namespace meca500_hardware
          * blocks until code1 or code2 is returned or error happens
          * @param code1 Primary expected return code
          * @param code2 Optional secondary expected return code (default 0)
-         * @return 0 if success, 1 if error received
+         * @return true if success, false if error received
          */
-        int waitForReturnCode(SuccessCode code1, SuccessCode code2 = SuccessCode{0});
+        bool waitForReturnCode(SuccessCode code1, SuccessCode code2 = SuccessCode{0});
 
         /**
          * Parse a raw string from the robot into a SuccessCode.
