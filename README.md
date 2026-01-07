@@ -23,8 +23,7 @@ git clone https://github.com/Vanderbilt-Applied-Robotics-Lab/meca500_ros2.git
 3. Install dependencies
 
 ```bash
-sudo rosdep init
-rosdep update
+cd ~/workspace/meca_ws
 rosdep install --from-paths src --ignore-src -r -y
 ```
 
