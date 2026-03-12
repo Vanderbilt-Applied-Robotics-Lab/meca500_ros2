@@ -5,6 +5,7 @@ from launch.event_handlers import OnProcessExit
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
+from launch.substitutions import PythonExpression
 
 from launch_param_builder import ParameterBuilder
 from moveit_configs_utils import MoveItConfigsBuilder
@@ -22,6 +23,17 @@ def launch_setup(context, *args, **kwargs):
     control_port = LaunchConfiguration("control_port")
     hardware_type = LaunchConfiguration("hardware_type")
 
+
+    # --------------------------
+    # Hardware configuration
+    # --------------------------
+    simulation_value = LaunchConfiguration("simulation").perform(context)
+
+    if simulation_value == "true":
+        hardware_plugin = "mock_components/GenericSystem"
+    else:
+        hardware_plugin = "meca500_hardware/Meca500Hardware"
+
     # --------------------------
     # MoveIt configuration
     # --------------------------
@@ -33,7 +45,7 @@ def launch_setup(context, *args, **kwargs):
         .robot_description(
             mappings={
                 "hardware_type": hardware_type,
-                "simulation": simulation,
+                "hardware_plugin": hardware_plugin,
                 "robot_ip": robot_ip,
                 "robot_port": robot_port,
                 "control_port": control_port,
