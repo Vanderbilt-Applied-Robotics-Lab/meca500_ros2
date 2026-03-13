@@ -43,8 +43,16 @@ cd ~/workspace/meca_ws
 source install/setup.bash
 ```
 
-2. Start controller
+2. Start controller (Real Hardware)
 
 ```bash
 ros2 launch meca500_bringup moveit.py
 ```
+
+3. Start controller (simulation)
+
+```bash
+ros2 launch meca500_bringup moveit.py simulation:=true
+```
+
+
