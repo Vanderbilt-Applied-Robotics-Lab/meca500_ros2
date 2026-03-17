@@ -4,6 +4,9 @@
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="meca500_arm">
     <xacro:arg name="initial_positions_file" default="initial_positions.yaml" />
+    <xacro:arg name="hardware_plugin" default="mock_components/GenericSystem"/>
+    <xacro:arg name="robot_ip" default="192.168.0.100"/>
+    <xacro:arg name="robot_port" default="10000"/>
 
     <!-- Import meca500 urdf file -->
     <xacro:include filename="$(find meca500_description)/urdf/meca500.xacro" />
@@ -11,5 +14,11 @@
     <!-- Import control_xacro -->
     <xacro:include filename="meca500.ros2_control.xacro" />
 
-    <xacro:meca500_ros2_control name="$(arg hardware_type)" initial_positions_file="$(arg initial_positions_file)"/>
+    <xacro:meca500_ros2_control 
+        name="$(arg hardware_type)"
+        hardware_plugin="$(arg hardware_plugin)"
+        robot_ip="$(arg robot_ip)"
+        robot_port="$(arg robot_port)"
+        initial_positions_file="$(arg initial_positions_file)"
+    />
 </robot>
