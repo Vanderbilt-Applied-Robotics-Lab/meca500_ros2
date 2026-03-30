@@ -66,13 +66,7 @@ def launch_setup(context, *args, **kwargs):
     # --------------------------
     # MoveIt Servo parameters
     # --------------------------
-    servo_params = {
-        "moveit_servo": ParameterBuilder("meca500_moveit")
-        .yaml("config/servo.yaml")
-        .to_dict()
-    }
-
-    planning_group_name = {"planning_group_name": "meca500"}
+    servo_params = ParameterBuilder("meca500_moveit").yaml("config/servo.yaml").to_dict()
 
     # --------------------------
     # Controller config
@@ -167,7 +161,6 @@ def launch_setup(context, *args, **kwargs):
         condition=IfCondition(servo),
         parameters=[
             servo_params,
-            planning_group_name,
             moveit_config.robot_description,
             moveit_config.robot_description_semantic,
             moveit_config.robot_description_kinematics,

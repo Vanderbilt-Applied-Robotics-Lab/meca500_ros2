@@ -4,7 +4,7 @@ project(meca500_description)
 find_package(ament_cmake REQUIRED)
 
 install(
-    DIRECTORY urdf meshes/collision meshes/visual
+    DIRECTORY urdf meshes
     DESTINATION share/${PROJECT_NAME}/
 )
 
