@@ -10,27 +10,27 @@ ROS 2 Controllers For the Mecademic meca500 robot
 1. Create workspace
 
 ```bash
-mkdir -p ~/workspace/meca_ws/src
+mkdir -p ~/workspaces/meca_ws/src
 ```
 
 2. Download code
 
 ```bash
-cd ~/workspace/meca_ws/src
+cd ~/workspaces/meca_ws/src
 git clone https://github.com/Vanderbilt-Applied-Robotics-Lab/meca500_ros2.git
 ```
 
 3. Install dependencies
 
 ```bash
-cd ~/workspace/meca_ws
+cd ~/workspaces/meca_ws
 rosdep install --from-paths src --ignore-src -r -y
 ```
 
 4. Build code
 
 ```bash
-cd ~/workspace/meca_ws
+cd ~/workspaces/meca_ws
 colcon build
 ```
 
@@ -39,7 +39,7 @@ colcon build
 1. Source code
 
 ```bash
-cd ~/workspace/meca_ws
+cd ~/workspaces/meca_ws
 source install/setup.bash
 ```
 
