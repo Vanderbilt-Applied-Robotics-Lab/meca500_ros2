@@ -48,7 +48,7 @@ source install/setup.bash
 For real hardware:
 
 ```bash
-ros2 launch meca500_bringup moveit.py
+ros2 launch meca500_bringup moveit.launch.py
 ```
 
 For simulated hardware:
